@@ -12,6 +12,8 @@ namespace PCB_SKT_Due_Date_Emailer
 {
 	class Program
 	{
+		static Outlook.Application outlookApplication = new Outlook.Application();
+
 		static void Main(string[] args)
 		{
 			DateTime today = DateTime.UtcNow;
@@ -20,7 +22,21 @@ namespace PCB_SKT_Due_Date_Emailer
 			string date = userTime.Month.ToString().PadLeft(2, '0') + "/" + userTime.Day.ToString().PadLeft(2, '0') + "/" + userTime.Year + " " + userTime.ToString("HH:mm:ss tt");
 
 			var dataListReturn = getAllPCBList();
+			if (dataListReturn.Count < 1)
+				Environment.Exit(0);
+
 			var filtered_list = filter_list(dataListReturn);
+			if (filtered_list.Count < 1)
+				Environment.Exit(0);
+
+			var colored_list = assign_colors(filtered_list);
+
+			var html_string = generate_html(colored_list);
+
+			string subject = "PCB Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
+			string email_list = "manju@icenginc.com; mike@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
+			string temp_list = "nabeelz@icenginc.com";
+			sendEmail(subject, html_string, temp_list);
 		}
 
 		static private List<PCB_entry> getAllPCBList()
@@ -68,7 +84,7 @@ namespace PCB_SKT_Due_Date_Emailer
 								entry.date_in_string = (rdr["PCB Recv'd Date"].ToString());
 								entry.order_date_string = (rdr["PCB PO Date"].ToString());
 								entry.pcb_work_ext = (rdr["PCB_Work Ext"].ToString());
-								
+
 								dataListReturn.Add(entry);
 
 							}//End if
@@ -95,25 +111,108 @@ namespace PCB_SKT_Due_Date_Emailer
 		static private List<PCB_entry> filter_list(List<PCB_entry> input)
 		{
 			var now = DateTime.Now;
-
+			var new_list = new List<PCB_entry>();
 			for (int i = 0; i < input.Count; i++)
 			{
 				var entry = input[i];
 				//populate the datetime field
 				entry.convert_dates(); //converts dates and saves conversion success status
 
-				if (entry.conversion[1])//conversion 2 is order_date, make sure its valid
-				{
-					if (entry.conversion[2]) //if date in exists (its already done)
-					{
-						input.RemoveAt(i);
-						i--;
-					}
-				}
+				if (!entry.conversion[2])//if no date in, not received yet
+					new_list.Add(entry);
+
+				if (entry.due_date > now && entry.date_in < now) //gold star - early
+					new_list.Add(entry);
+					
+			}
+
+			return new_list;
+		}
+
+		static private List<PCB_entry> assign_colors(List<PCB_entry> input)
+		{
+			var now = DateTime.Now;
+
+			foreach (PCB_entry entry in input)
+			{
+				if (entry.due_date < now && !entry.conversion[2]) //due date overdue, no received date
+					entry.color = "red";
+				if (entry.due_date.AddDays(-5) < now) //within 5 days
+					entry.color = "yellow";
+				if (entry.due_date.AddDays(-5) > now) //outside of 5 days
+					entry.color = "green";
+				if (entry.due_date > now && entry.date_in < now)
+					entry.color = "blue";
+				if (entry.due_date_string == "")
+					entry.color = "orange";
 			}
 
 			return input;
 		}
+
+		static private string generate_html(List<PCB_entry> input)
+		{
+			string html = "Total PCBs: " + input.Count.ToString() + "<br /><br />";
+			html += "<table style='border: 1px solid;padding:px;border-collapse:collapse;font-family:Calibri Light;' cellpadding='10'>";
+
+			html += "<tr>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Job Num</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Vendor</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PCB Work Ext.</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Quantity</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PO Date</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Due Date</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Recv'd Date</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Customer</td>";
+			//html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;width:300px;'>Comments</td>";
+
+			html += "</tr>";
+
+			foreach (PCB_entry entry in input)
+			{
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.job_num.ToString() + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.vendor.ToString() + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.pcb_work_ext.ToString() + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.qty_ordered.ToString() + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.order_date.ToString("MM/dd/yyyy") + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.due_date.ToString("MM/dd/yyyy") + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.date_in.ToString("MM/dd/yyyy") + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + entry.customer.ToString() + "</td>";
+
+				html += "</tr>";
+			}
+
+			html += "</table>";
+
+			html += "<br /><br />";
+
+			return html;
+		}
+
+		static private void sendEmail(string subject, string emailBody, string toEmailList)
+		{
+			string subjectEmail = subject;
+			string bodyEmail = emailBody;
+			string toEmail = toEmailList;
+
+			CreateEmailItem(subjectEmail, toEmail, bodyEmail);
+
+		}//End SendEmailtoContacts
+
+		static private void CreateEmailItem(string subjectEmail,
+			   string toEmail, string bodyEmail)
+		{
+			Outlook.MailItem eMail = (Outlook.MailItem)
+				outlookApplication.CreateItem(Outlook.OlItemType.olMailItem);
+
+			eMail.Subject = subjectEmail;
+			eMail.To = toEmail;
+			eMail.Body = bodyEmail;
+			eMail.HTMLBody = bodyEmail;
+			eMail.Importance = Outlook.OlImportance.olImportanceHigh;
+			((Outlook._MailItem)eMail).Send();
+
+		}//End CreateEmailItem
 	}
 
 	class PCB_entry
@@ -127,6 +226,7 @@ namespace PCB_SKT_Due_Date_Emailer
 		public string vendor;
 		public string pcb_work_ext;
 
+		public string color = "";
 
 		public DateTime due_date;
 		public DateTime order_date;
