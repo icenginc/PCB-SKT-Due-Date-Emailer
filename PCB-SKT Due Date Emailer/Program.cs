@@ -156,7 +156,7 @@ namespace PCB_SKT_Due_Date_Emailer
 			html += "<table style='border: 1px solid;padding:px;border-collapse:collapse;font-family:Calibri Light;' cellpadding='10'>";
 
 			html += "<tr>";
-			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Job Num</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Job Number</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Vendor</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PCB Work Ext.</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Quantity</td>";
@@ -209,7 +209,7 @@ namespace PCB_SKT_Due_Date_Emailer
 			eMail.To = toEmail;
 			eMail.Body = bodyEmail;
 			eMail.HTMLBody = bodyEmail;
-			eMail.Importance = Outlook.OlImportance.olImportanceHigh;
+			eMail.Importance = Outlook.OlImportance.olImportanceLow;
 			((Outlook._MailItem)eMail).Send();
 
 		}//End CreateEmailItem
