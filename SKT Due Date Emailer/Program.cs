@@ -29,12 +29,16 @@ namespace SKT_Due_Date_Emailer
 			if (filtered_list.Count < 1)
 				Environment.Exit(0);
 
-			var html_string = generate_html(filtered_list);
+			//put assign colors
+			var colored_list = assign_colors(filtered_list);
+
+			var html_string = generate_html(colored_list);
 
 			string subject = "Socket Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
 			string email_list = "manju@icenginc.com; mike@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
+			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
 			string temp_list = "nabeelz@icenginc.com";
-			sendEmail(subject, html_string, temp_list);
+			sendEmail(subject, html_string, "", cc_list);
 		}
 
 		static private List<socket_entry> getAllSKTList()
@@ -134,17 +138,38 @@ namespace SKT_Due_Date_Emailer
 			return new_list;
 		}
 
+		static private List<socket_entry> assign_colors(List<socket_entry> input)
+		{
+			var now = DateTime.Now;
+
+			foreach (socket_entry entry in input)
+			{
+				if (entry.due_date < now && !entry.conversion[2]) //due date overdue, no received date
+					entry.color = "red";
+				else if (entry.due_date.AddDays(-3) < now) //within n days
+					entry.color = "yellow";
+				if (entry.due_date.AddDays(-3) > now) //outside of n days
+					entry.color = "green";
+				if (entry.due_date > now && entry.date_in < now && entry.conversion[2]) //also check the bool, otherwise we will read 01/01/01
+					entry.color = "blue";
+				if (entry.due_date_string == "")
+					entry.color = "orange";
+			}
+
+			return input;
+		}
+
 		static private string generate_html(List<socket_entry> input)
 		{
-			string html = "Total PCBs: " + input.Count.ToString() + "<br /><br />";
+			string html = "Total Sockets: " + input.Count.ToString() + "<br /><br />";
 			html += "<table style='border: 1px solid;padding:px;border-collapse:collapse;font-family:Calibri Light;' cellpadding='10'>";
 
 			html += "<tr>";
-			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Work Order ID</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>WO</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Vendor</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PO No.</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Part No.</td>";
-			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PCB Work Ext.</td>";
-			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Quantity</td>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Qty</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PO Date</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Due Date</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Recv'd Date</td>";
@@ -155,6 +180,23 @@ namespace SKT_Due_Date_Emailer
 
 			foreach (socket_entry entry in input)
 			{
+				if (entry.color == "red")//red
+					html += "<tr style='background-Color:#FF896A'>"; //f24004
+				else if (entry.color == "yellow") //yellow
+					html += "<tr style='background-Color:#FFFAA3'>";
+				else if (entry.color == "green")// green
+					html += "<tr style='background-Color:#FFFFFF'>"; //default
+				else if (entry.color == "blue")//blue
+					html += "<tr style='background-Color:#60A1E9'>"; 
+				else if (entry.color == "orange")//orange
+					html += "<tr style='background-Color:#E9B460'>";
+				else
+					html += "<tr style='background-Color:#FFFFFF'>"; //default
+
+				string date_in = entry.date_in.ToString("MM/dd/yy");
+				if (date_in == "01/01/01")
+					date_in = "";
+
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.work_order_id.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.vendor.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.PO_num.ToString() + "</td>";
@@ -162,7 +204,7 @@ namespace SKT_Due_Date_Emailer
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.qty_ordered.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.order_date.ToString("MM/dd/yyyy") + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.due_date.ToString("MM/dd/yyyy") + "</td>";
-				html += "<td style='border: 1px solid black;text-align:center'>" + entry.date_in.ToString("MM/dd/yyyy") + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + date_in + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.customer.ToString() + "</td>";
 
 				html += "</tr>";
@@ -175,27 +217,27 @@ namespace SKT_Due_Date_Emailer
 			return html;
 		}
 
-		static private void sendEmail(string subject, string emailBody, string toEmailList)
+		static private void sendEmail(string subject, string emailBody, string toEmailList, string toCC)
 		{
 			string subjectEmail = subject;
 			string bodyEmail = emailBody;
 			string toEmail = toEmailList;
 
-			CreateEmailItem(subjectEmail, toEmail, bodyEmail);
+			CreateEmailItem(subjectEmail, toEmail, toCC, bodyEmail);
 
 		}//End SendEmailtoContacts
 
-		static private void CreateEmailItem(string subjectEmail,
-			   string toEmail, string bodyEmail)
+		static private void CreateEmailItem(string subjectEmail, string toEmail, string toCC, string bodyEmail)
 		{
 			Outlook.MailItem eMail = (Outlook.MailItem)
 				outlookApplication.CreateItem(Outlook.OlItemType.olMailItem);
 
 			eMail.Subject = subjectEmail;
 			eMail.To = toEmail;
+			eMail.CC = toCC;
 			eMail.Body = bodyEmail;
 			eMail.HTMLBody = bodyEmail;
-			eMail.Importance = Outlook.OlImportance.olImportanceLow;
+			eMail.Importance = Outlook.OlImportance.olImportanceNormal;
 			((Outlook._MailItem)eMail).Send();
 
 		}//End CreateEmailItem
@@ -212,6 +254,8 @@ namespace SKT_Due_Date_Emailer
 		public string customer;
 		public string work_order_id;
 		public string vendor;
+
+		public string color = "";
 
 		public DateTime due_date;
 		public DateTime order_date;
