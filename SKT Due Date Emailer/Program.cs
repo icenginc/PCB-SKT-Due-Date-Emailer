@@ -35,9 +35,8 @@ namespace SKT_Due_Date_Emailer
 			var html_string = generate_html(colored_list);
 
 			string subject = "Socket Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
-			string email_list = "manju@icenginc.com; mike@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
+			string email_list = "manju@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
-			string temp_list = "nabeelz@icenginc.com";
 			sendEmail(subject, html_string, "", cc_list);
 		}
 
@@ -79,7 +78,7 @@ namespace SKT_Due_Date_Emailer
 								//Console.Write("Executing...\n");
 								List<string> tempStringList = new List<string>();
 								socket_entry socket = new socket_entry();
-								
+
 								socket.PO_num = (rdr["SKT - PO #"].ToString());
 								socket.part_num = (rdr["SKT - Part #"].ToString());
 								socket.qty_ordered = (rdr["SKT - Qty Ordered"].ToString()); //quantity
@@ -130,7 +129,7 @@ namespace SKT_Due_Date_Emailer
 				if (!entry.conversion[2])//if no date in, not received yet
 					new_list.Add(entry);
 
-				if (entry.due_date > now && entry.date_in < now) //gold star - early
+				else if (entry.due_date > now && entry.date_in < now) //gold star - early
 					new_list.Add(entry);
 
 			}
@@ -187,7 +186,7 @@ namespace SKT_Due_Date_Emailer
 				else if (entry.color == "green")// green
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 				else if (entry.color == "blue")//blue
-					html += "<tr style='background-Color:#60A1E9'>"; 
+					html += "<tr style='background-Color:#60A1E9'>";
 				else if (entry.color == "orange")//orange
 					html += "<tr style='background-Color:#E9B460'>";
 				else
@@ -269,7 +268,7 @@ namespace SKT_Due_Date_Emailer
 			var order_date_bool = convert_order_date();
 			var date_in_bool = convert_date_in();
 
-			conversion = new bool[]{due_date_bool, order_date_bool, date_in_bool};
+			conversion = new bool[] { due_date_bool, order_date_bool, date_in_bool };
 		}
 
 		private bool convert_date_in()

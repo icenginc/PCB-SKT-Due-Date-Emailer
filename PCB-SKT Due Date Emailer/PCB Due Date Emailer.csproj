@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8FBE7F9D-FC70-494F-A417-9ED461A761B1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PCB_SKT_Due_Date_Emailer</RootNamespace>
-    <AssemblyName>PCB-SKT Due Date Emailer</AssemblyName>
+    <RootNamespace>PCB_Due_Date_Emailer</RootNamespace>
+    <AssemblyName>PCB Due Date Emailer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

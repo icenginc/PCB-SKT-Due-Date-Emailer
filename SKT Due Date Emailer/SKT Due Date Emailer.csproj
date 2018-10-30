@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0E90C8FA-945B-4980-84F4-8EFA88F1396F}</ProjectGuid>
+    <ProjectGuid>{C65570FA-0317-4B79-803A-04CAAA31FCDA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>SKT_Due_Date_Emailer</RootNamespace>
     <AssemblyName>SKT Due Date Emailer</AssemblyName>

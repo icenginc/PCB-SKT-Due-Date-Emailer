@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCB Due Date Emailer", "PCB-SKT Due Date Emailer\PCB Due Date Emailer.csproj", "{8FBE7F9D-FC70-494F-A417-9ED461A761B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SKT Due Date Emailer", "SKT Due Date Emailer\SKT Due Date Emailer.csproj", "{0E90C8FA-945B-4980-84F4-8EFA88F1396F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SKT Due Date Emailer", "SKT Due Date Emailer\SKT Due Date Emailer.csproj", "{C65570FA-0317-4B79-803A-04CAAA31FCDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{8FBE7F9D-FC70-494F-A417-9ED461A761B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FBE7F9D-FC70-494F-A417-9ED461A761B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FBE7F9D-FC70-494F-A417-9ED461A761B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E90C8FA-945B-4980-84F4-8EFA88F1396F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E90C8FA-945B-4980-84F4-8EFA88F1396F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E90C8FA-945B-4980-84F4-8EFA88F1396F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E90C8FA-945B-4980-84F4-8EFA88F1396F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C65570FA-0317-4B79-803A-04CAAA31FCDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C65570FA-0317-4B79-803A-04CAAA31FCDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C65570FA-0317-4B79-803A-04CAAA31FCDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C65570FA-0317-4B79-803A-04CAAA31FCDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

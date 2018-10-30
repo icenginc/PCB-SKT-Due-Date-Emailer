@@ -8,7 +8,7 @@ using System.Data.OleDb;
 using System.IO;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
-namespace PCB_SKT_Due_Date_Emailer
+namespace PCB_Due_Date_Emailer
 {
 	class Program
 	{
@@ -37,7 +37,7 @@ namespace PCB_SKT_Due_Date_Emailer
 			string email_list = "manju@icenginc.com; pamela@icenginc.com; jing@icenginc.com; ariane@icenginc.com";
 			string temp_list = "nabeelz@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
-			sendEmail(subject, html_string, "", temp_list);
+			sendEmail(subject, html_string, "", cc_list);
 		}
 
 		static private List<PCB_entry> getAllPCBList()
@@ -122,7 +122,7 @@ namespace PCB_SKT_Due_Date_Emailer
 				if (!entry.conversion[2])//if no date in, not received yet
 					new_list.Add(entry);
 
-				if (entry.due_date > now && entry.date_in < now) //gold star - early
+				else if (entry.due_date > now && entry.date_in < now) //gold star - early
 					new_list.Add(entry);
 					
 			}
