@@ -38,6 +38,7 @@ namespace SKT_Due_Date_Emailer
 			string email_list = "manju@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
 			sendEmail(subject, html_string, "", cc_list);
+
 		}
 
 		static private List<socket_entry> getAllSKTList()
@@ -151,7 +152,7 @@ namespace SKT_Due_Date_Emailer
 					entry.color = "green";
 				if (entry.due_date > now && entry.date_in < now && entry.conversion[2]) //also check the bool, otherwise we will read 01/01/01
 					entry.color = "blue";
-				if (entry.due_date_string == "")
+				if (entry.due_date_string == "" || entry.work_order_id == "0" || entry.qty_ordered == "" || entry.customer == "" || entry.vendor == "" || entry.PO_num == "" || entry.part_num == "")
 					entry.color = "orange";
 			}
 
@@ -180,15 +181,15 @@ namespace SKT_Due_Date_Emailer
 			foreach (socket_entry entry in input)
 			{
 				if (entry.color == "red")//red
-					html += "<tr style='background-Color:#FF896A'>"; //f24004
+					html += "<tr style='background-Color:#FF6E6E'>"; //f24004
 				else if (entry.color == "yellow") //yellow
 					html += "<tr style='background-Color:#FFFAA3'>";
 				else if (entry.color == "green")// green
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 				else if (entry.color == "blue")//blue
-					html += "<tr style='background-Color:#60A1E9'>";
+					html += "<tr style='background-Color:#70A9E9'>";
 				else if (entry.color == "orange")//orange
-					html += "<tr style='background-Color:#E9B460'>";
+					html += "<tr style='background-Color:#FEA47E'>";
 				else
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 
