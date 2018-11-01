@@ -36,7 +36,7 @@ namespace SKT_Due_Date_Emailer
 
 			string subject = "Socket Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
 			string email_list = "manju@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
-			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
+			string cc_list = "mike@icenginc.com; ml colnabeelz@icenginc.com";
 			sendEmail(subject, html_string, "", cc_list);
 
 		}
@@ -181,7 +181,7 @@ namespace SKT_Due_Date_Emailer
 			foreach (socket_entry entry in input)
 			{
 				if (entry.color == "red")//red
-					html += "<tr style='background-Color:#FF6E6E'>"; //f24004
+					html += "<tr style='background-Color:#FF7F5E'>"; //f24004
 				else if (entry.color == "yellow") //yellow
 					html += "<tr style='background-Color:#FFFAA3'>";
 				else if (entry.color == "green")// green
@@ -189,7 +189,7 @@ namespace SKT_Due_Date_Emailer
 				else if (entry.color == "blue")//blue
 					html += "<tr style='background-Color:#70A9E9'>";
 				else if (entry.color == "orange")//orange
-					html += "<tr style='background-Color:#FEA47E'>";
+					html += "<tr style='background-Color:#E9B460'>";
 				else
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 

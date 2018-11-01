@@ -174,7 +174,7 @@ namespace PCB_Due_Date_Emailer
 			foreach (PCB_entry entry in input)
 			{
 				if (entry.color == "red")//red
-					html += "<tr style='background-Color:#F65E5E'>"; //f24004
+					html += "<tr style='background-Color:#FF7F5E'>"; //f24004
 				else if (entry.color == "yellow") //yellow
 					html += "<tr style='background-Color:#FFFAA3'>";
 				else if (entry.color == "green")// green
@@ -182,7 +182,7 @@ namespace PCB_Due_Date_Emailer
 				else if (entry.color == "blue")//blue
 					html += "<tr style='background-Color:#70A9E9'>";
 				else if (entry.color == "orange")//orange
-					html += "<tr style='background-Color:#F68C5E'>";
+					html += "<tr style='background-Color:#E9B460'>";
 				else
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 
