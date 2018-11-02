@@ -37,7 +37,7 @@ namespace PCB_Due_Date_Emailer
 			string email_list = "manju@icenginc.com; pamela@icenginc.com; jing@icenginc.com; ariane@icenginc.com";
 			string temp_list = "nabeelz@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
-			sendEmail(subject, html_string, "", cc_list);
+			sendEmail(subject, html_string, email_list, cc_list);
 		}
 
 		static private List<PCB_entry> getAllPCBList()

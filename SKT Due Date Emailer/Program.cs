@@ -36,8 +36,8 @@ namespace SKT_Due_Date_Emailer
 
 			string subject = "Socket Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
 			string email_list = "manju@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
-			string cc_list = "mike@icenginc.com; ml colnabeelz@icenginc.com";
-			sendEmail(subject, html_string, "", cc_list);
+			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
+			sendEmail(subject, html_string, email_list, cc_list);
 
 		}
 
