@@ -34,7 +34,7 @@ namespace PCB_Due_Date_Emailer
 			var html_string = generate_html(colored_list);
 
 			string subject = "PCB Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
-			string email_list = "manju@icenginc.com; pamela@icenginc.com; jing@icenginc.com; ariane@icenginc.com";
+			string email_list = "manju@icenginc.com; pamela@icenginc.com; jing@icenginc.com; ariane@icenginc.com; narendra@icenginc.com";
 			string temp_list = "nabeelz@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
 			sendEmail(subject, html_string, email_list, cc_list);
@@ -140,7 +140,7 @@ namespace PCB_Due_Date_Emailer
 					entry.color = "red";
 				else if (entry.due_date.AddDays(-3) < now) //within n days
 					entry.color = "yellow";
-				if (entry.due_date.AddDays(-3) > now) //outside of n days
+				else if (entry.due_date.AddDays(-3) > now) //outside of n days
 					entry.color = "green";
 				if (entry.due_date > now && entry.date_in < now && entry.conversion[2]) //also check the bool, otherwise we will read 01/01/01
 					entry.color = "blue";
@@ -187,15 +187,19 @@ namespace PCB_Due_Date_Emailer
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 
 				string date_in = entry.date_in.ToString("MM/dd/yy");
+				string due_date = entry.due_date.ToString("MM/dd/yy");
+				 
 				if (date_in == "01/01/01")
 					date_in = "";
+				if (due_date == "01/01/01")
+					due_date = "";
 
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.job_num.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.vendor.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.pcb_work_ext.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.qty_ordered.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.order_date.ToString("MM/dd/yy") + "</td>";
-				html += "<td style='border: 1px solid black;text-align:center'>" + entry.due_date.ToString("MM/dd/yy") + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + due_date + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + date_in + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.customer.ToString() + "</td>";
 

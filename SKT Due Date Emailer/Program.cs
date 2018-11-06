@@ -29,14 +29,17 @@ namespace SKT_Due_Date_Emailer
 			if (filtered_list.Count < 1)
 				Environment.Exit(0);
 
+			var list_job_nums = assign_job_num(filtered_list);
+
 			//put assign colors
-			var colored_list = assign_colors(filtered_list);
+			var colored_list = assign_colors(list_job_nums);
 
 			var html_string = generate_html(colored_list);
 
 			string subject = "Socket Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
 			string email_list = "manju@icenginc.com; pamela@icenginc.com; narendra@icenginc.com; ariane@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
+			string temp_list = "nabeelz@icenginc.com";
 			sendEmail(subject, html_string, email_list, cc_list);
 
 		}
@@ -114,7 +117,7 @@ namespace SKT_Due_Date_Emailer
 
 			return dataListReturn;
 
-		}//End of getAllPMList
+		}//End of getAllSKTList
 
 		static private List<socket_entry> filter_list(List<socket_entry> input)
 		{
@@ -148,7 +151,7 @@ namespace SKT_Due_Date_Emailer
 					entry.color = "red";
 				else if (entry.due_date.AddDays(-3) < now) //within n days
 					entry.color = "yellow";
-				if (entry.due_date.AddDays(-3) > now) //outside of n days
+				else if (entry.due_date.AddDays(-3) > now) //outside of n days
 					entry.color = "green";
 				if (entry.due_date > now && entry.date_in < now && entry.conversion[2]) //also check the bool, otherwise we will read 01/01/01
 					entry.color = "blue";
@@ -159,12 +162,59 @@ namespace SKT_Due_Date_Emailer
 			return input;
 		}
 
+		static private List<socket_entry> assign_job_num(List<socket_entry> input)
+		{
+			string databaseLocation = "\\\\ICEDATA_SERVER\\Log-Book\\BoardDesign_Assy_Database_BE.mdb";
+			OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + databaseLocation + ";");
+
+			//Console.Write("Board Inventory Database Location: {0}\n", databaseLocation);
+
+			con.Open();
+
+			try
+			{
+				if (con.State == ConnectionState.Open)
+				{
+					Console.Write("Board Design Database Opened to find Job Number\n");
+
+					OleDbCommand cmd = new OleDbCommand();
+					cmd.Connection = con;
+
+					foreach (socket_entry entry in input)
+					{
+
+						string work_order = entry.work_order_id;
+						string statement = "SELECT * FROM [tblBoardDesignProjects] WHERE [Design_Work Order ID] = " + work_order;
+
+						cmd.CommandText = statement;
+
+						using (OleDbDataReader rdr = cmd.ExecuteReader())
+						{
+							Console.WriteLine("Cross-referencing Entry...");
+							while (rdr.Read())
+							{
+								if (rdr.FieldCount > 0)
+								{
+									entry.job_num = (rdr[0].ToString()); //job number
+								}
+							}
+						} //read databse entry matching socket
+					} // do this once per socket entry
+				}
+			}
+			catch
+			{ }
+
+			return input;
+		}
+
 		static private string generate_html(List<socket_entry> input)
 		{
 			string html = "Total Sockets: " + input.Count.ToString() + "<br /><br />";
 			html += "<table style='border: 1px solid;padding:px;border-collapse:collapse;font-family:Calibri Light;' cellpadding='10'>";
 
 			html += "<tr>";
+			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>JobNum</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>WO</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>Vendor</td>";
 			html += "<td style='border: 1px solid black;text-align:center;font-weight: bold;'>PO No.</td>";
@@ -194,16 +244,24 @@ namespace SKT_Due_Date_Emailer
 					html += "<tr style='background-Color:#FFFFFF'>"; //default
 
 				string date_in = entry.date_in.ToString("MM/dd/yy");
+				string due_date = entry.due_date.ToString("MM/dd/yy");
+				string jobnum = "";
+				if (entry.job_num != null)
+					jobnum = entry.job_num.ToString();
+
 				if (date_in == "01/01/01")
 					date_in = "";
+				if (due_date == "01/01/01")
+					due_date = "";
 
+				html += "<td style='border: 1px solid black;text-align:center'>" + jobnum + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.work_order_id.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.vendor.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.PO_num.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.part_num.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.qty_ordered.ToString() + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.order_date.ToString("MM/dd/yyyy") + "</td>";
-				html += "<td style='border: 1px solid black;text-align:center'>" + entry.due_date.ToString("MM/dd/yyyy") + "</td>";
+				html += "<td style='border: 1px solid black;text-align:center'>" + due_date + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + date_in + "</td>";
 				html += "<td style='border: 1px solid black;text-align:center'>" + entry.customer.ToString() + "</td>";
 
@@ -254,6 +312,7 @@ namespace SKT_Due_Date_Emailer
 		public string customer;
 		public string work_order_id;
 		public string vendor;
+		public string job_num;
 
 		public string color = "";
 
