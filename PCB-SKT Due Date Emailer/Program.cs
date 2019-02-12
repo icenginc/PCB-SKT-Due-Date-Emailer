@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Nabeel Ziauddin - Innovative Circuits Engineering 11/18 (updated 1/16/19 - mailing list)
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +36,7 @@ namespace PCB_Due_Date_Emailer
 			var html_string = generate_html(colored_list);
 
 			string subject = "PCB Due Date List - " + userTime.Month + "/" + userTime.Day + "/" + userTime.Year;
-			string email_list = "manju@icenginc.com; pamela@icenginc.com; jing@icenginc.com; ariane@icenginc.com; narendra@icenginc.com";
+			string email_list = "manju@icenginc.com; pamela@icenginc.com; jing@icenginc.com; ariane@icenginc.com; narendra@icenginc.com; jaredl@icenginc.com; steven@icenginc.com; Wendy@icenginc.com";
 			string temp_list = "nabeelz@icenginc.com";
 			string cc_list = "mike@icenginc.com; nabeelz@icenginc.com";
 			sendEmail(subject, html_string, email_list, cc_list);
